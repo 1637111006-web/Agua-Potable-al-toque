@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema de Evaluación de Calidad de Agua</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI, sans-serif;
+}
+
+body{
+background:#0f172a;
+color:white;
+padding:20px;
+}
+
+.container{
+max-width:1200px;
+margin:auto;
+}
+
+header{
+text-align:center;
+padding:20px;
+margin-bottom:20px;
+}
+
+header h1{
+color:#38bdf8;
+}
+
+.card{
+background:#1e293b;
+padding:20px;
+border-radius:15px;
+margin-bottom:20px;
+box-shadow:0 0 10px rgba(0,0,0,0.3);
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:15px;
+}
+
+label{
+display:block;
+margin-bottom:5px;
+font-weight:bold;
+}
+
+input{
+width:100%;
+padding:10px;
+border:none;
+border-radius:8px;
+}
+
+button{
+background:#0ea5e9;
+color:white;
+padding:15px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+font-size:16px;
+margin-top:15px;
+width:100%;
+}
+
+button:hover{
+background:#0284c7;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:15px;
+}
+
+table th,
+table td{
+border:1px solid #334155;
+padding:10px;
+text-align:center;
+}
+
+.apto{
+color:#22c55e;
+font-weight:bold;
+}
+
+.noapto{
+color:#ef4444;
+font-weight:bold;
+}
+
+.resultado{
+text-align:center;
+padding:20px;
+font-size:24px;
+font-weight:bold;
+border-radius:15px;
+margin-top:20px;
+}
+
+.verde{
+background:#166534;
+}
+
+.rojo{
+background:#991b1b;
+}
+
+footer{
+text-align:center;
+margin-top:20px;
+color:#94a3b8;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+<h1>Sistema Inteligente de Evaluación de Calidad de Agua</h1>
+<p>Basado en parámetros para consumo humano - Perú</p>
+</header>
+
+<div class="card">
+
+<h2>Ingreso de Parámetros</h2>
+
+<div class="grid">
+
+<div>
+<label>pH</label>
+<input type="number" id="ph" step="0.1">
+</div>
+
+<div>
+<label>Turbidez (UNT)</label>
+<input type="number" id="turbidez">
+</div>
+
+<div>
+<label>Cloro Residual (mg/L)</label>
+<input type="number" id="cloro" step="0.1">
+</div>
+
+<div>
+<label>Nitratos (mg/L)</label>
+<input type="number" id="nitratos">
+</div>
+
+<div>
+<label>Coliformes Totales (NMP/100mL)</label>
+<input type="number" id="coliformes">
+</div>
+
+<div>
+<label>E. coli (NMP/100mL)</label>
+<input type="number" id="ecoli">
+</div>
+
+</div>
+
+<button onclick="evaluar()">Evaluar Calidad del Agua</button>
+
+</div>
+
+<div class="card">
+
+<h2>Resultados</h2>
+
+<table>
+<thead>
+<tr>
+<th>Parámetro</th>
+<th>Valor</th>
+<th>Estado</th>
+</tr>
+</thead>
+
+<tbody id="tablaResultados">
+</tbody>
+
+</table>
+
+<div id="estadoGeneral"></div>
+
+</div>
+
+</div>
+
+<footer>
+Ingeniería Ambiental - Sistema de Evaluación de Calidad de Agua
+</footer>
+
+<script>
+
+function evaluar(){
+
+let ph = parseFloat(document.getElementById("ph").value);
+let turbidez = parseFloat(document.getElementById("turbidez").value);
+let cloro = parseFloat(document.getElementById("cloro").value);
+let nitratos = parseFloat(document.getElementById("nitratos").value);
+let coliformes = parseFloat(document.getElementById("coliformes").value);
+let ecoli = parseFloat(document.getElementById("ecoli").value);
+
+let tabla = document.getElementById("tablaResultados");
+tabla.innerHTML = "";
+
+let apta = true;
+
+function agregar(nombre, valor, condicion){
+
+let estado = condicion ? "APTO" : "NO APTO";
+
+if(!condicion){
+apta = false;
+}
+
+tabla.innerHTML += `
+<tr>
+<td>${nombre}</td>
+<td>${valor}</td>
+<td class="${condicion ? 'apto':'noapto'}">${estado}</td>
+</tr>
+`;
+}
+
+agregar("pH", ph, ph >= 6.5 && ph <= 8.5);
+
+agregar("Turbidez", turbidez, turbidez <= 5);
+
+agregar("Cloro Residual", cloro, cloro >= 0.5 && cloro <= 1.5);
+
+agregar("Nitratos", nitratos, nitratos <= 50);
+
+agregar("Coliformes Totales", coliformes, coliformes === 0);
+
+agregar("E. coli", ecoli, ecoli === 0);
+
+let resultado = document.getElementById("estadoGeneral");
+
+if(apta){
+
+resultado.className = "resultado verde";
+
+resultado.innerHTML =
+"🟢 AGUA APTA PARA CONSUMO HUMANO";
+
+}else{
+
+resultado.className = "resultado rojo";
+
+resultado.innerHTML =
+"🔴 AGUA NO APTA PARA CONSUMO HUMANO";
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
